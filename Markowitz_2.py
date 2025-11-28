@@ -51,7 +51,7 @@ class MyPortfolio:
     NOTE: You can modify the initialization function
     """
 
-    def __init__(self, price, exclude, lookback=50, gamma=0):
+    def __init__(self, price, exclude, lookback=126, gamma=0):
         self.price = price
         self.returns = price.pct_change().fillna(0)
         self.exclude = exclude
@@ -70,7 +70,19 @@ class MyPortfolio:
         """
         TODO: Complete Task 4 Below
         """
-        
+        for i in range(self.lookback + 1, len(self.price)):
+
+            past_prices = self.price[assets].iloc[i - self.lookback : i]
+            start_prices = past_prices.iloc[0].replace(0, np.nan)
+            momentum = past_prices.iloc[-1] / start_prices - 1
+            
+            top_assets = momentum.nlargest(6).index
+            
+            for asset in assets:
+                if asset in top_assets:
+                    self.portfolio_weights.loc[self.price.index[i], asset] = 1.0 / 6
+                else:
+                    self.portfolio_weights.loc[self.price.index[i], asset] = 0.0
         
         """
         TODO: Complete Task 4 Above
